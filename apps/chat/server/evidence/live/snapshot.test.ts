@@ -21,6 +21,7 @@ import {
 } from "../../files/store.js";
 import { createCatalog } from "../../products.js";
 import type { UiIndex } from "../ui/index.js";
+import { findBrowser } from "./chromium.js";
 import { createEnvStore } from "./envs.js";
 import { createSnapshotStore, type CaptureProgress } from "./snapshots.js";
 
@@ -163,7 +164,10 @@ async function waitFor(
   }
 }
 
-describe("后台采集", () => {
+// 测试的数据目录是临时的，里面不会有自装的浏览器；这里实际查的是 PMFORGE_CHROMIUM 与 playwright 缓存。
+const hasChromium = findBrowser(tmpdir()).path !== null;
+
+describe.skipIf(!hasChromium)("后台采集", () => {
   it("start 立即返回；采集在服务端继续跑，跑完落成一版快照", async () => {
     const { store, productId, envId } = await setup();
     const t = Date.now();

@@ -38,8 +38,15 @@ jobs:
       - name: 类型检查
         run: pnpm typecheck
 
+      # 页面快照 / 只读浏览相关用例要真浏览器。GitHub 的 Ubuntu 机器自带 Google Chrome，
+      # 直接指过去，不用每次下载 Chromium。
+      - name: 确认浏览器
+        run: google-chrome --version
+
       - name: 单元测试
         run: pnpm test
+        env:
+          PMFORGE_CHROMIUM: /usr/bin/google-chrome
 
       - name: 构建
         run: pnpm build

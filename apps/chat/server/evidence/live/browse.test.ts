@@ -131,7 +131,8 @@ const hasChromium = await (async () => {
     ).catch((e: unknown) => e);
     // 起得来浏览器、只是连不上地址：说明本机有 Chromium。
     return !(
-      b instanceof Error && /Executable|browserType\.launch/.test(b.message)
+      b instanceof Error &&
+      /Executable|browserType\.launch|没找到可用的浏览器内核/.test(b.message)
     );
   } catch {
     return false;
