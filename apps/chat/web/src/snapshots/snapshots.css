@@ -1,0 +1,177 @@
+/*
+ * 页面快照库：与文件库 / 代码库并列的第三处事实依据。
+ * 三栏：版本列表 / 这一版的页面 / 选中页面的截图与版本事实。
+ */
+.sn-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg);
+}
+.sn-toolbar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 24px 0;
+}
+.sn-capture {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.sn-body {
+  display: grid;
+  grid-template-columns: 220px 280px 1fr;
+  gap: 1px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--line);
+}
+.sn-body > * {
+  min-width: 0;
+}
+.sn-versions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  padding: 12px;
+  overflow-y: auto;
+}
+.sn-versions button {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background: none;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+.sn-versions button:hover {
+  background: var(--bg-sunken);
+}
+.sn-versions button.on {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.sn-versions strong {
+  font-family: var(--mono);
+  font-size: var(--text-label);
+}
+.sn-pages {
+  min-height: 0;
+  overflow-y: auto;
+  background: var(--bg-soft);
+}
+.sn-pages ul {
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+}
+.sn-pages li button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text);
+  font-size: var(--text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.sn-pages li button:hover {
+  background: var(--bg-sunken);
+}
+.sn-pages li button.on {
+  background: var(--accent-soft);
+}
+.sn-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sn-pages code {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-micro);
+  overflow-wrap: anywhere;
+}
+.sn-detail {
+  min-height: 0;
+  padding: 16px 20px 24px;
+  overflow-y: auto;
+}
+.sn-detail header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.sn-detail header code {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-caption);
+}
+.sn-shot {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  cursor: zoom-in;
+}
+.sn-facts {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 6px 12px;
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: var(--text-label);
+}
+.sn-facts dt {
+  color: var(--muted);
+}
+.sn-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1100px) {
+  .sn-body {
+    grid-template-columns: 180px 1fr;
+  }
+  .sn-versions {
+    grid-row: 1 / span 2;
+  }
+}
+@media (max-width: 780px) {
+  .sn-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .sn-versions {
+    flex-direction: row;
+    grid-row: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .sn-pages {
+    display: none;
+  }
+}

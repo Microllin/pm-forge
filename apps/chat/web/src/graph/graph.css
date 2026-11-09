@@ -1,0 +1,431 @@
+/*
+ * 产品 → 图谱。令牌与基础类沿用 styles.css；React Flow 的默认样式由
+ * `@xyflow/react/dist/style.css` 提供，这里只覆盖需要对齐设计系统的那几处。
+ *
+ * 泳道是 React Flow 的分组节点（不是 HTML 覆盖层）——参考的运维控制台的
+ * TopologyCanvas.vue 注释里记着他们踩过的坑：覆盖层追画布 transform 会错位。
+ */
+
+/* flex 而不是 grid-template-rows：工具条下面那几条提示是**条件渲染**的，
+   而 grid 的行按位置分配——少渲染一条，.g-body 就落到 auto 行上，高度变 0，
+   画布整个消失（实测踩过）。flex 下子节点个数变化不影响 flex:1 的那个。 */
+.g-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--bg);
+}
+.g-toolbar,
+.g-notice {
+  flex: none;
+}
+
+/* ── 工具条 ── */
+.g-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.g-toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.g-toolbar-title strong {
+  font-size: var(--text-body);
+}
+.g-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+/* 同排控件等高（旧 app 正是在这项上翻过车：26/30/32 混排把整行顶歪） */
+.g-toolbar-actions .seg button {
+  height: 26px;
+  padding: 0 12px;
+}
+.g-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--line);
+}
+.g-notice .btn.ghost {
+  height: 24px;
+  padding: 0 8px;
+}
+
+/* ── 画布与抽屉 ── */
+.g-body {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.g-canvas {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg-soft);
+}
+.g-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+}
+.g-empty p {
+  margin: 0;
+  max-width: 420px;
+}
+
+/* ── 泳道（分组节点）── */
+.g-lane {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+}
+.g-lane.brand {
+  border-color: color-mix(in srgb, var(--accent) 24%, var(--line));
+  background: color-mix(in srgb, var(--accent) 4%, var(--bg));
+}
+.g-lane-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px 0;
+  line-height: 1.3;
+}
+.g-lane-head strong {
+  font-size: var(--text-label);
+}
+.g-lane-head .small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 卡片节点 ── */
+.g-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+.g-card:hover {
+  border-color: var(--line-strong);
+}
+.g-card.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+.g-card-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.g-card-head strong {
+  overflow: hidden;
+  font-size: var(--text-label);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 产出物状态：左侧 2px 色条 + 小圆点，不整卡染色——染色会让「有状态」看起来像「出错了」 */
+.g-artifact {
+  border-left-width: 2px;
+}
+.g-artifact.present {
+  border-left-color: var(--ok);
+}
+.g-artifact.partial {
+  border-left-color: var(--warn-mark);
+}
+.g-artifact.missing {
+  border-left-color: var(--danger);
+}
+.g-artifact.unknown {
+  border-left-color: var(--line-strong);
+}
+.g-artifact-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.g-dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+}
+.g-dot.present {
+  background: var(--ok);
+}
+.g-dot.partial {
+  background: var(--warn-mark);
+}
+.g-dot.missing {
+  background: var(--danger);
+}
+.g-dot.unknown {
+  background: var(--line-strong);
+}
+
+/* ── 齐备度条 ── */
+.density {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.density-bar {
+  display: flex;
+  gap: 2px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: var(--r-xs, 4px);
+}
+.density-seg {
+  display: block;
+  border-radius: 2px;
+}
+.density-seg.present {
+  background: var(--ok);
+}
+.density-seg.partial {
+  background: var(--warn-mark);
+}
+.density-seg.missing {
+  background: var(--danger);
+}
+.density-seg.unknown {
+  background: var(--bg-sunken);
+}
+.density-text {
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.density-gap {
+  color: var(--warn);
+}
+.g-blockers {
+  color: var(--muted);
+  font-size: var(--text-caption);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── 详情抽屉（= 产品 wiki 那一半）── */
+.g-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 340px;
+  overflow-y: auto;
+  padding: 16px 20px 24px;
+  border-left: 1px solid var(--line);
+  background: var(--bg);
+}
+.g-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.g-drawer-head h3 {
+  margin: 0;
+  font-size: var(--text-title);
+  overflow-wrap: anywhere;
+}
+.g-drawer-tags {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.g-drawer-section h4 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.g-drawer-section p {
+  margin: 0;
+  font-size: var(--text-label);
+}
+.g-drawer-foot {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 8px;
+}
+.g-missed,
+.g-checkpoints {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+.g-missed li + li,
+.g-checkpoints li + li {
+  margin-top: 4px;
+}
+/* 漏掉的那几条在全量清单里也标出来：两份列表对照着看才知道「漏的是第几条」 */
+.g-checkpoints li.missed {
+  color: var(--warn);
+  font-weight: 500;
+}
+.g-files {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.g-files li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.g-files code,
+.g-drawer code {
+  overflow-wrap: anywhere;
+  font-size: var(--text-caption);
+}
+.g-blocker-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--warn);
+  font-size: var(--text-label);
+}
+.g-gap-text {
+  color: var(--warn);
+}
+
+/* ── React Flow 覆盖 ── */
+.g-canvas .react-flow__node-lane {
+  /* 泳道是容器：鼠标事件要穿透到画布，否则在泳道空白处拖不动视图 */
+  pointer-events: none;
+}
+.g-canvas .react-flow__handle {
+  opacity: 0;
+}
+/* 生命线主干：比默认边粗、带品牌色。1.5px 浅灰在 20px 的缝隙里等于没画（实测）。 */
+.g-canvas .react-flow__edge-path {
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+.g-canvas .g-edge.lifeline .react-flow__edge-path {
+  stroke: color-mix(in srgb, var(--accent) 45%, var(--line-strong));
+  stroke-width: 2.5;
+}
+.g-canvas .react-flow__controls {
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md, 0 4px 12px rgb(0 0 0 / 8%));
+}
+.g-canvas .react-flow__controls-button {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text-soft);
+}
+.g-canvas .react-flow__controls-button:hover {
+  background: var(--bg-sunken);
+}
+.g-canvas .react-flow__controls-button svg {
+  fill: currentColor;
+}
+.g-canvas .react-flow__attribution {
+  background: transparent;
+  font-size: var(--text-micro);
+}
+
+/* ── 功能架构树 ── */
+.g-feature {
+  gap: 4px;
+}
+/* 层级徽标：等宽 + 胶囊，L1/L2/L3 要能一眼对齐着扫 */
+.g-level {
+  flex: none;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-sunken);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-micro);
+  font-weight: 600;
+}
+.g-feature-duty {
+  margin: 0;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: var(--text-caption);
+  line-height: 1.4;
+  /* 两行截断：职责是一句话，超过两行多半是写成了段落 */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.g-feature-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+/* 「未拆下级」要看得出是个提示而不是状态：它表示这里可以点「向下拆一层」 */
+.g-leaf {
+  color: var(--accent);
+}
+.g-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+.g-search input {
+  width: 150px;
+  border: 0;
+  background: none;
+  font-size: var(--text-caption);
+  outline: none;
+}

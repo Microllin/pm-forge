@@ -1,0 +1,451 @@
+/* 全局 AI 补齐：发起框（两步确认）与补齐页（进度 + 草稿）。
+   颜色全部走 styles.css 的 token；AI 紫（--ai）只给「发起补齐」这个 AI 动作。 */
+
+/* ── 弹窗 ── */
+.fill-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 32%);
+}
+.fill-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(860px, 100%);
+  max-height: calc(100vh - 48px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  box-shadow: 0 20px 56px rgb(0 0 0 / 26%);
+}
+.fill-dialog:not(.wide) {
+  width: min(560px, 100%);
+}
+.fill-dialog[aria-label="全局 AI 补齐"] {
+  width: min(880px, 100%);
+}
+.fill-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px 10px;
+}
+.fill-head > div {
+  flex: 1;
+  min-width: 0;
+}
+.fill-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: var(--text-title);
+}
+.fill-head h2 svg {
+  color: var(--ai);
+}
+.fill-steps {
+  display: flex;
+  gap: 4px;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fill-steps li {
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--text-soft);
+  font-size: var(--text-caption);
+  background: var(--bg-sunken);
+}
+.fill-steps li[aria-current="step"] {
+  color: var(--ai);
+  background: var(--ai-soft);
+  font-weight: 600;
+}
+.fill-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 20px 16px;
+}
+.fill-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--line);
+}
+.fill-sum {
+  margin-right: auto;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+
+/* AI 动作按钮：紫底白字，和普通主按钮区分开——它是「会花大钱」的那一个。 */
+.btn.fill-go {
+  border-color: transparent;
+  background: var(--ai);
+  color: #fff;
+}
+.btn.fill-go:hover:not(:disabled) {
+  filter: brightness(1.08);
+  background: var(--ai);
+}
+.btn.fill-go:disabled {
+  opacity: 0.45;
+}
+
+.fill-page .btn.small,
+.fill-dialog .btn.small,
+.fill-banner .btn.small {
+  height: 28px;
+  padding: 0 10px;
+  font-size: var(--text-caption);
+}
+
+/* ── 预览表 / 草稿表 ── */
+.fill-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-label);
+}
+.fill-table th {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-soft);
+  font-weight: 500;
+  font-size: var(--text-caption);
+  text-align: left;
+  white-space: nowrap;
+}
+.fill-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.fill-table td strong {
+  display: block;
+}
+.fill-table tr.idle td {
+  opacity: 0.6;
+}
+.fill-table tr.picked td {
+  background: var(--accent-soft);
+}
+.fill-table .num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.fill-check {
+  width: 28px;
+}
+.fill-check input {
+  margin: 2px 0 0;
+  cursor: pointer;
+}
+
+/* ── 代价说明 ── */
+.fill-cost {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--warn-mark);
+  border-radius: var(--r-md);
+  background: var(--warn-soft);
+  color: var(--text);
+}
+.fill-cost > svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--warn-mark);
+}
+.fill-cost ul {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: var(--text-label);
+}
+.fill-cost b {
+  color: var(--warn);
+}
+.fill-aware {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-label);
+  cursor: pointer;
+}
+.fill-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 20px 8px;
+  padding: 10px 14px;
+  border-radius: var(--r-md);
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: var(--text-label);
+}
+.fill-page .fill-banner {
+  margin: 0;
+}
+
+/* ── 补齐页 ── */
+.fill-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+  overflow-y: auto;
+  padding: 28px 40px 40px;
+  background: var(--bg);
+}
+.fill-page > * {
+  width: 100%;
+  max-width: 1280px;
+}
+.fill-page-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.fill-page-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+  font-size: var(--text-title);
+}
+.fill-page-actions {
+  display: flex;
+  gap: 8px;
+}
+.fill-chip {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  background: var(--bg-sunken);
+  color: var(--text-soft);
+}
+.fill-chip.running {
+  background: var(--ai-soft);
+  color: var(--ai);
+}
+.fill-chip.done {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.fill-chip.interrupted {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.fill-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fill-bar {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-sunken);
+}
+.fill-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ai);
+  transition: width 0.3s;
+}
+.fill-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fill-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.fill-section-head h3 {
+  margin: 0;
+  font-size: var(--text-body);
+}
+.fill-toolbar {
+  display: flex;
+  gap: 8px;
+}
+.fill-kind {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--bg-sunken);
+  color: var(--text-soft);
+  font-size: var(--text-micro);
+}
+.fill-target {
+  word-break: break-all;
+  font-size: var(--text-caption);
+}
+.fill-flag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-size: var(--text-micro);
+  white-space: nowrap;
+}
+.fill-flag.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.fill-flag.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.fill-row-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.fill-jobs {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+.fill-job {
+  display: grid;
+  grid-template-columns: 20px minmax(90px, 160px) 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-label);
+}
+.fill-job:last-child {
+  border-bottom: 0;
+}
+.fill-job-icon {
+  display: inline-flex;
+  color: var(--text-soft);
+}
+.fill-job.running .fill-job-icon {
+  color: var(--ai);
+}
+.fill-job.done .fill-job-icon {
+  color: var(--ok);
+}
+.fill-job.failed .fill-job-icon {
+  color: var(--danger);
+}
+.fill-job-product {
+  overflow: hidden;
+  color: var(--text-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fill-job-label {
+  min-width: 0;
+}
+.fill-job-error {
+  display: block;
+  color: var(--danger);
+  font-size: var(--text-caption);
+}
+.fill-job.skipped .fill-job-error,
+.fill-job.cancelled .fill-job-error {
+  color: var(--text-soft);
+}
+.fill-preview {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+  font-size: var(--text-label);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.fill-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  max-width: 520px !important;
+  margin: 60px auto 0;
+  text-align: center;
+}
+.fill-empty > svg {
+  color: var(--ai);
+}
+.fill-empty h2 {
+  margin: 0;
+  font-size: var(--text-title);
+}
+
+/* 顶栏入口：平时只是一个图标（鼠标停留看说明），跑起来才露出进度数字。 */
+.topbar-ai {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  color: var(--accent-fg);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background-color var(--dur-fast) var(--ease);
+}
+.topbar-ai:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.topbar-ai.running {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+}
+.topbar-ai .dot-live {
+  background: var(--ai);
+}
+
+@media (max-width: 760px) {
+  .fill-page {
+    padding: 20px 16px 32px;
+  }
+  .fill-job {
+    grid-template-columns: 20px 1fr auto;
+  }
+  .fill-job-product {
+    display: none;
+  }
+  .topbar-ai span.label {
+    display: none;
+  }
+}

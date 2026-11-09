@@ -1,0 +1,270 @@
+/* 事实底座 → 代码库：仓库清单。浏览某个仓库时复用 files.css。 */
+.code-page {
+  height: 100%;
+  overflow-y: auto;
+}
+/* 页面内边距统一从 --page-pad 取：各页原来各有 24/32/40 一套，
+   切页面时内容左右边界会跳一下，看着像两套界面拼起来。 */
+.code-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--page-pad) var(--space-10);
+}
+.code-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+.code-titles {
+  display: flex;
+  flex: 1;
+  min-width: 260px;
+  flex-direction: column;
+  gap: 6px;
+}
+.code-titles h1 {
+  margin: 0;
+  font-size: var(--text-display);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.code-titles p {
+  max-width: 62ch;
+  margin: 0;
+  font-size: var(--text-label);
+}
+.code-actions {
+  display: flex;
+  gap: 8px;
+}
+.code-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-md);
+  background: var(--accent-soft);
+  font-size: var(--text-label);
+}
+.code-bar {
+  flex: 1;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--bg-sunken);
+}
+.code-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--accent);
+  transition: width 0.2s;
+}
+.code-notice {
+  margin: 0;
+}
+.code-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+}
+.code-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 48px 16px;
+  color: var(--muted);
+  font-size: var(--text-label);
+  text-align: center;
+}
+.code-empty p {
+  margin: 0;
+}
+.code-table-wrap {
+  overflow-x: auto;
+}
+.code-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-label);
+}
+.code-table th {
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+.code-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.code-table tr:last-child td {
+  border-bottom: 0;
+}
+.code-table tbody tr:hover {
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+}
+.code-table .num {
+  text-align: right;
+}
+.code-table .mono {
+  font-family: var(--mono);
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+}
+.code-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 500;
+  cursor: pointer;
+}
+.code-name svg {
+  color: var(--accent);
+}
+.code-name:hover span {
+  color: var(--accent-fg);
+  text-decoration: underline;
+}
+.code-products {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.code-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-fg);
+  font-size: var(--text-caption);
+}
+.code-ops {
+  width: 1%;
+  text-align: right;
+}
+.code-ops .icon-btn {
+  width: 28px;
+  height: 28px;
+  color: var(--muted);
+}
+.code-ops .icon-btn.danger:hover:not(:disabled) {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.files-back {
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* 克隆 / 拉取的实时输出 */
+.code-terminal {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+.code-terminal.bad {
+  border-color: var(--danger);
+}
+.code-terminal-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-label);
+}
+.code-terminal-head b {
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.code-terminal-head .icon-btn {
+  width: 26px;
+  height: 26px;
+  margin-left: auto;
+}
+.code-terminal-body {
+  max-height: 220px;
+  margin: 0;
+  padding: 10px 12px;
+  overflow: auto;
+  color: var(--text-soft);
+  font-family: var(--mono);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.code-when {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.code-origin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: var(--text-micro);
+}
+/* 克隆对话框的表单 */
+.clone-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.clone-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: var(--text-label);
+}
+.clone-form label > span em {
+  font-style: normal;
+  font-size: var(--text-caption);
+}
+.clone-form input {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  font-size: var(--text-label);
+  outline: none;
+}
+.clone-form input:focus {
+  border-color: var(--accent);
+  box-shadow: var(--glow);
+}
+.clone-form p {
+  margin: 0;
+}

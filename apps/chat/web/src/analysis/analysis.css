@@ -1,0 +1,359 @@
+/*
+ * AI 分析（识别产线与产品、比对产出物）的界面。令牌与基础类沿用 styles.css；
+ * 对话框壳（.overlay / .dialog / .field）也复用全局那一套。
+ */
+
+/* ── 对话页顶部的分析横幅 ── */
+.analysis-banner {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--line);
+  background: var(--accent-soft);
+}
+.analysis-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  color: var(--accent);
+}
+.analysis-text {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.35;
+}
+.analysis-text strong {
+  font-size: var(--text-label);
+}
+.analysis-text code {
+  font-size: var(--text-caption);
+}
+.analysis-note {
+  flex: none;
+  margin: 0;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-label);
+}
+
+/* ── 文件夹选择器 ── */
+.picker-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+  font-size: var(--text-label);
+}
+.picker-crumbs span {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.picker-crumbs button {
+  padding: 2px 6px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+.picker-crumbs button:hover {
+  background: var(--bg-sunken);
+  color: var(--text);
+}
+.picker-folders {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 180px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg-soft);
+}
+.picker-folder {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: inherit;
+  font-size: var(--text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.picker-folder:hover {
+  background: var(--bg-sunken);
+}
+/* 选中的文件（挂参考资料时可以选单个文件）。 */
+.picker-folder.active {
+  background: var(--accent-soft, var(--bg-sunken));
+  font-weight: 600;
+}
+.picker-folder span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.picker-folder .picker-name {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.picker-folder .picker-name:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.picker-picked {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.picker-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 4px 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  font-size: var(--text-caption);
+}
+.picker-chip code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.picker-current {
+  margin-right: auto;
+}
+
+/* ── 识别结果确认表 ── */
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 46vh;
+  overflow-y: auto;
+}
+.review-line {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+/* 没勾的整块压暗，但仍可读——它还要能被重新勾上 */
+.review-line.off,
+.review-product.off {
+  opacity: 0.5;
+}
+.review-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.review-name {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+.review-name:hover,
+.review-name:focus {
+  border-color: var(--line-strong);
+  background: var(--bg);
+  outline: none;
+}
+.review-reason {
+  margin: 2px 0 0 26px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+}
+.review-product {
+  margin: 6px 0 0 20px;
+  padding-left: 10px;
+  border-left: 2px solid var(--line);
+}
+.review-path {
+  flex: none;
+  max-width: 260px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.review-evidence {
+  margin: 4px 0 0 26px;
+}
+.review-evidence ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.review-evidence li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--text-caption);
+}
+.review-evidence .review-path {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.review-evidence .review-reason {
+  margin-left: 0;
+}
+.review-reason.warn {
+  color: var(--warn-mark);
+}
+.review-uncertain {
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--warn-mark) 35%, var(--line));
+  border-radius: var(--r-md);
+  background: var(--warn-soft);
+}
+.review-uncertain h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: var(--text-label);
+}
+.review-uncertain ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+.review-uncertain li + li {
+  margin-top: 4px;
+}
+
+/* ── 比对报告 ── */
+.report-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pill.bad {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.pill.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+.report-stage h4 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.report-item {
+  padding: 8px 0;
+}
+.report-item + .report-item {
+  border-top: 1px solid var(--line);
+}
+.report-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: var(--text-label);
+}
+.report-missed {
+  margin-top: 6px;
+  padding-left: 2px;
+}
+.report-missed ol {
+  margin: 3px 0 0;
+  padding-left: 20px;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+.report-files {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 6px 0 0;
+}
+.report-files code,
+.report-missed code {
+  padding: 1px 7px;
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  font-size: var(--text-caption);
+}
+.report-note {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: var(--text-caption);
+}
+
+/* 功能架构结果面板里的一条 */
+.review-feature {
+  padding: 6px 0;
+}
+.review-feature + .review-feature {
+  border-top: 1px solid var(--line);
+}
+.review-evidence {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 4px 0 0 26px;
+}
+.review-evidence code {
+  padding: 1px 7px;
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  font-size: var(--text-caption);
+}

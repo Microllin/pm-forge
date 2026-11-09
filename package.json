@@ -1,0 +1,45 @@
+{
+  "name": "pmforge",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-first AI product manager workspace",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24",
+    "pnpm": ">=10.34.5 <11"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @pmforge/chat dev",
+    "start": "pnpm --filter @pmforge/chat build && pnpm --filter @pmforge/chat start",
+    "dev:chat": "pnpm dev",
+    "start:chat": "pnpm start",
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "24.13.3",
+    "@vitest/coverage-v8": "4.1.10",
+    "concurrently": "10.0.4",
+    "eslint": "10.0.1",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.3",
+    "globals": "17.9.0",
+    "jsdom": "30.0.1",
+    "prettier": "3.9.6",
+    "tsx": "4.23.9",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.66.0",
+    "vitest": "4.1.10"
+  }
+}

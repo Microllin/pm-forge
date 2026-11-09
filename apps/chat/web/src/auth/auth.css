@@ -1,0 +1,380 @@
+/* 登录 / 首次设置页。不依赖应用外壳，所以自己铺满屏幕。 */
+.auth-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 16px;
+  background: var(--bg-sunken, var(--bg));
+  color: var(--text);
+}
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 360px;
+  padding: 28px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+  box-shadow: var(--shadow-pop);
+}
+.auth-card h1 {
+  margin: 0;
+  font-size: var(--text-title);
+}
+.auth-card .btn.primary {
+  justify-content: center;
+}
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+  margin-top: 10px;
+}
+
+/* ── 登录 / 首次设置：左侧会动的「锻造」画面 + 右侧表单 ──
+   左右两块都跟主题走（黑紫 / 白紫）。左边是表面色，右边是画布色，靠一条发丝线分开。 */
+.auth-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  height: 100vh;
+  min-height: 560px;
+  background: var(--bg-soft);
+  color: var(--text);
+}
+.auth-showcase {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  padding: 36px 40px;
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+}
+.auth-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+/* 底图：生成的锻造台线稿，铺满左栏。上沿压暗一点，让左上角的品牌字仍然清楚。 */
+.auth-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 22%,
+    #000 78%,
+    transparent 100%
+  );
+}
+.auth-brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--text-body);
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+.auth-logo {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.auth-hero {
+  position: relative;
+  max-width: 460px;
+}
+.auth-hero h2 {
+  font-size: 2.6em; /* 登录页大标题：正文的 2.6 倍，用 em 不另立一档字号 */
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.auth-hero em {
+  color: var(--accent-fg);
+}
+
+/* 三道工序：浮在画面上的小卡，轻轻上下浮动，错开节奏 */
+.auth-stages {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.auth-stage {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-pop);
+  animation:
+    stage-in 0.6s var(--ease) both,
+    bob 7s ease-in-out infinite;
+}
+.auth-stage strong {
+  display: block;
+  font-size: var(--text-label);
+  font-weight: 700;
+}
+.auth-stage small {
+  display: block;
+  color: var(--muted);
+  font-size: var(--text-micro);
+}
+.auth-stage-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-fg);
+}
+.auth-stage.s1 {
+  top: 26%;
+  left: 9%;
+  animation-delay:
+    0.1s,
+    -1s;
+}
+.auth-stage.s2 {
+  top: 17%;
+  right: 12%;
+  animation-delay:
+    0.25s,
+    -3.5s;
+}
+.auth-stage.s3 {
+  top: 54%;
+  right: 20%;
+  animation-delay:
+    0.4s,
+    -5.5s;
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* ── 右侧表单 ───────────────────────────────────────────────────── */
+.auth-side {
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+.auth-card.auth-card-flat {
+  gap: 16px;
+  max-width: 360px;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  animation: rise 0.5s var(--ease) both;
+}
+.auth-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+.auth-heading h1 {
+  font-size: var(--text-display);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.auth-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--muted);
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+.auth-input:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  color: var(--accent-fg);
+}
+.auth-input input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: var(--text-body);
+  outline: none;
+}
+.auth-input input::placeholder {
+  color: var(--faint);
+}
+.auth-error {
+  animation: shake 0.35s var(--ease);
+}
+@keyframes shake {
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+.auth-submit {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: var(--text-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+.auth-submit:hover:not(:disabled) {
+  background: var(--accent-bright);
+}
+.auth-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.auth-submit:disabled {
+  cursor: default;
+}
+.auth-submit.idle:disabled {
+  opacity: 0.5;
+}
+.auth-submit-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--accent-text);
+  opacity: 0.55;
+}
+.auth-submit.busy .auth-submit-bar {
+  animation: load 1.2s var(--ease) forwards;
+}
+.auth-submit.done .auth-submit-bar {
+  width: 100%;
+}
+.auth-submit-ok {
+  animation: ok-pop 0.35s var(--ease);
+}
+@keyframes load {
+  to {
+    width: 85%;
+  }
+}
+@keyframes ok-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+.auth-foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--faint);
+  font-size: var(--text-caption);
+}
+.auth-brand-compact {
+  display: none;
+}
+
+/* 登录成功的转场：从按钮中心铺开一个圆，颜色是应用的画布色 */
+.auth-wipe {
+  position: fixed;
+  z-index: 100;
+  width: 300vmax;
+  height: 300vmax;
+  border-radius: 50%;
+  background: var(--bg-soft);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  animation: wipe 0.6s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+@keyframes wipe {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (max-width: 1180px) {
+  .auth-hero h2 {
+    font-size: 2em;
+  }
+}
+@media (max-width: 900px) {
+  .auth-split {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  .auth-showcase {
+    display: none;
+  }
+  .auth-brand-compact {
+    display: flex;
+    margin-bottom: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-stage,
+  .auth-card.auth-card-flat {
+    animation: none;
+  }
+}

@@ -1,0 +1,211 @@
+/*
+ * 产品 → 生命周期规范。令牌、按钮、.pill / .tag / .muted 等基础类沿用 styles.css；
+ * 这里只放这一页自己的布局。骨架与产品页同构（左列表右详情），
+ * 复用了 products.css 的 .sidebar-head / .notice / .line-head / .section-head /
+ * .products-empty / .desc / .empty-row —— 两页同属「产品」一级菜单，
+ * 共用这几个壳类比各写一套更不容易漂。
+ */
+
+.lifecycle-page {
+  display: grid;
+  grid-template-columns: var(--sidebar) 1fr;
+  gap: 1px;
+  height: 100%;
+  background: var(--line);
+}
+.lifecycle-side {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-soft);
+}
+.template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding: 0 8px 12px;
+}
+.template-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  font-size: var(--text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.template-item:hover {
+  background: var(--bg-sunken);
+}
+.template-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 500;
+}
+.template-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lifecycle-main {
+  overflow-y: auto;
+  padding: var(--space-8) var(--page-pad) var(--space-10);
+  background: var(--bg);
+}
+.lifecycle-main > * {
+  max-width: 920px;
+}
+.line-head h2 .tag {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+/* 模板的操作比产品线多（编辑 / 复制 / 恢复出厂 / 删除），窄屏下允许换行 */
+.head-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ── 阶段 ── */
+.stage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stage {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+.stage-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+/* 代号用等宽 + 胶囊：L0.1 / L5.2 这类编号要能一眼对齐着扫 */
+.stage-code {
+  flex: none;
+  min-width: 46px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  text-align: center;
+}
+.stage-title {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+.stage-actions {
+  display: flex;
+  flex: none;
+  gap: 2px;
+}
+
+/* ── 产出物 ── */
+.artifact-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.artifact + .artifact {
+  border-top: 1px solid var(--line);
+}
+.artifact-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 12px;
+}
+.artifact-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: inherit;
+  font-size: var(--text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.artifact-toggle:hover {
+  background: var(--bg-soft);
+}
+.artifact-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.faint {
+  color: var(--muted);
+}
+.pill.mild {
+  background: var(--bg-sunken);
+  color: var(--muted);
+}
+.artifact-detail {
+  padding: 2px 16px 14px 46px;
+}
+.artifact-guide {
+  margin: 0 0 10px;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+.artifact-detail h4 {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.checkpoints {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+}
+.checkpoints li + li {
+  margin-top: 3px;
+}
+.file-hints {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 10px 0 0;
+}
+.file-hints code {
+  padding: 1px 7px;
+  border-radius: var(--r-sm);
+  background: var(--bg-sunken);
+  font-size: var(--text-caption);
+}
+.artifact-add {
+  padding: 4px 10px 8px 12px;
+  border-top: 1px solid var(--line);
+}

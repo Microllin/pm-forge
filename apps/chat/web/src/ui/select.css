@@ -1,0 +1,95 @@
+/* 平台统一下拉框（ui/Select.tsx）。字号、颜色只用设计令牌，深浅色自动跟随。 */
+.ui-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  text-align: left;
+  cursor: pointer;
+}
+.ui-select:hover:not(:disabled) {
+  border-color: var(--muted);
+}
+.ui-select:focus-visible,
+.ui-select[aria-expanded="true"] {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.ui-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.ui-select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ui-select-value.placeholder {
+  color: var(--muted);
+}
+.ui-select-caret {
+  flex: none;
+  color: var(--muted);
+}
+
+/* 场景尺寸：表单字段里与输入框同高同字号；工具栏的小号沿用 .input。 */
+.field .ui-select {
+  width: 100%;
+  height: auto;
+  padding: 7px 10px;
+  font-size: var(--text-label);
+}
+.grid .ui-select {
+  width: 100%;
+}
+.ui-select.input {
+  height: 32px;
+}
+
+.ui-select-list {
+  position: fixed;
+  z-index: 1000;
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg);
+  box-shadow: var(--shadow-pop);
+  color: var(--text);
+  font-size: var(--text-label);
+  list-style: none;
+}
+.ui-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 10px;
+  border-radius: calc(var(--r-sm) - 2px);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.ui-select-option.active {
+  background: var(--bg-sunken);
+}
+.ui-select-option[aria-selected="true"] {
+  color: var(--accent);
+  font-weight: 600;
+}
+.ui-select-option[aria-disabled="true"] {
+  color: var(--muted);
+  cursor: not-allowed;
+}

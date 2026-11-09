@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+
+# 安全修复：这两个包是 Fastify 路由解析与模型接口调用的底层依赖，
+# 旧版本存在可被构造请求绕过的漏洞。范围写法保证不跨大版本。
+overrides:
+  "fast-uri@>=3.0.0 <4.0.0": "3.1.9"
+  "fast-uri@>=4.0.0 <5.0.0": "4.1.5"
+  "undici": "8.12.3"

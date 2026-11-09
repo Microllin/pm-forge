@@ -1,0 +1,35 @@
+# 依赖与产物：镜像内会重新安装与构建
+node_modules/
+**/node_modules/
+apps/chat/dist/
+.pnpm-store/
+
+# 本地运行数据与凭据，绝不能进镜像
+data/
+.run/
+.env
+.env.*
+!.env.example
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# 开发与测试噪声
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 编辑器与系统
+.DS_Store
+.idea/
+.vscode/
+.git/
+.gitignore
+
+# 文档不参与运行，减少构建上下文
+docs/

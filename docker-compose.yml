@@ -1,0 +1,52 @@
+# PMForge 一键启动。
+#
+#   docker compose up -d
+#
+# 数据全部落在 ./data（数据库、上传的文件、浏览器内核），换机器时整个目录拷走即可。
+# 模型密钥等敏感配置写在同目录的 .env 里，不要提交进仓库。
+
+services:
+  pmforge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pmforge:local
+    container_name: pmforge
+    restart: unless-stopped
+    ports:
+      # 左边是宿主机端口，改这里就能换对外端口；容器内固定 3200
+      - "${PMFORGE_PORT:-3200}:3200"
+    environment:
+      # ── 存储 ──
+      PMFORGE_CHAT_DATA_DIR: /data
+      # ── 网络 ──
+      # 对话服务只监听容器内的回环地址，由前面的 vite preview 反代；
+      # 对外只暴露 3200 一个口，避免内部接口被直接访问。
+      PMFORGE_CHAT_HOST: 127.0.0.1
+      PMFORGE_CHAT_PORT: "4400"
+      PMFORGE_CHAT_WEB_HOST: 0.0.0.0
+      PMFORGE_CHAT_WEB_PORT: "3200"
+      # 用域名或 IP 访问时，把访问地址填进来（逗号分隔），否则提交类操作会被拦下
+      PMFORGE_CHAT_ALLOWED_ORIGINS: "${PMFORGE_ALLOWED_ORIGINS:-}"
+      # 登录口令没有环境变量入口：首次打开网页时在页面上设置管理员账号。
+      # 部署完请立刻访问一次完成设置，否则先打开的人会成为管理员。
+      TZ: "${TZ:-Asia/Shanghai}"
+    volumes:
+      - ./data:/data
+    # 关容器时给 supervisor 留出收尾时间，别让正在写的数据库被硬切
+    stop_grace_period: 20s
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3200/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      start_period: 25s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

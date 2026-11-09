@@ -1,0 +1,503 @@
+/* 任务与需求：一张通栏表格，样子照 Orca 的议题列表。
+   结构自上而下：快捷筛选胶囊 → 工具栏（筛选条件 / 搜索 / 操作）→ 表头 → 行。
+   表格放在一块卡片里，表头是细小的灰字，行与行之间只有一条发丝线——
+   密度靠字号和行高控制，不靠边框分格。 */
+.work {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  min-height: 0;
+  padding: var(--space-4) var(--page-pad) var(--space-4);
+}
+
+/* ── 快捷筛选 ─────────────────────────────────────────────────────── */
+.work-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.work-pills button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-soft);
+  font-size: var(--text-label);
+  cursor: pointer;
+}
+.work-pills button:hover {
+  background: var(--bg-sunken);
+  color: var(--text);
+}
+.work-pills button.on {
+  background: var(--bg-sunken);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.work-pills em {
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-style: normal;
+}
+.work-sync-note {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: var(--text-caption);
+}
+.work-sync-note.bad {
+  color: var(--danger);
+}
+
+/* ── 工具栏 ───────────────────────────────────────────────────────── */
+.work-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.work-toolbar .btn.active-filter {
+  border-color: var(--accent-line);
+  color: var(--accent-fg);
+}
+.work-search {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--muted);
+}
+.work-search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.work-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: var(--text-label);
+  outline: none;
+}
+.work-search-clear {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.work-search-clear:hover {
+  background: var(--bg-sunken);
+  color: var(--text);
+}
+.icon-btn.bordered {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.work-filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+}
+.work-filterbar .ui-select {
+  min-width: 140px;
+}
+.work-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: var(--text-caption);
+}
+
+/* ── 表格 ─────────────────────────────────────────────────────────── */
+.work-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.work-table {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.work-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 34px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+.work-table td {
+  height: 52px;
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: var(--text-label);
+  vertical-align: middle;
+}
+.work-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.work-table tbody tr:hover td {
+  background: var(--bg-soft);
+}
+.work-table tr.is-closed .title,
+.work-table tr.is-closed .work-title-text {
+  color: var(--muted);
+}
+
+/* 列宽 */
+.work-table .c-status {
+  width: 40px;
+  padding-right: 0;
+  text-align: center;
+}
+.work-table .c-id {
+  width: 96px;
+}
+.work-table .c-person {
+  width: 140px;
+}
+.work-table.is-task .c-person {
+  width: 72px;
+}
+.work-table.is-task .c-prio {
+  width: 64px;
+}
+.work-table .c-prio {
+  width: 96px;
+}
+.work-table .c-product {
+  width: 150px;
+}
+.work-table .c-state {
+  width: 120px;
+}
+.work-table .c-time {
+  width: 96px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+  white-space: nowrap;
+}
+.work-table .c-actions {
+  width: 150px;
+}
+
+/* 标题 / 上下文：上一行标题，下一行灰字上下文 */
+.work-title-text,
+.work-context-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.work-title-text {
+  color: var(--text);
+}
+.work-context-text {
+  margin-top: 1px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+}
+
+/* 可编辑格子：静息时看着就是普通文字，悬停露出浅底，聚焦才有边框。 */
+.work-cell-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 24px;
+  padding: 0 6px;
+  margin: 0 -6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-label);
+  text-overflow: ellipsis;
+}
+.work-cell-input:hover {
+  background: var(--bg-sunken);
+}
+.work-cell-input:focus {
+  border-color: var(--accent);
+  background: var(--bg);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  outline: none;
+}
+.work-cell-input::placeholder {
+  color: var(--faint);
+}
+.work-cell-input.title {
+  color: var(--text);
+  font-weight: 500;
+}
+.work-cell-input.context {
+  height: 20px;
+  color: var(--muted);
+  font-size: var(--text-caption);
+}
+.work-new-row td {
+  height: 44px;
+  background: var(--bg-soft);
+  color: var(--muted);
+}
+.work-new-row .work-cell-input {
+  height: 30px;
+}
+
+/* 格子里的下拉：去掉边框，像文字一样躺在格子里 */
+.ui-select.work-cell-select {
+  width: 100%;
+  height: 28px;
+  padding: 0 6px;
+  margin-left: -6px;
+  border-color: transparent;
+  background: none;
+  color: var(--text-soft);
+}
+.ui-select.work-cell-select:hover:not(:disabled) {
+  border-color: var(--line-strong);
+  background: var(--bg);
+}
+.ui-select.work-cell-select .ui-select-caret {
+  opacity: 0;
+}
+.ui-select.work-cell-select:hover .ui-select-caret,
+.ui-select.work-cell-select[aria-expanded="true"] .ui-select-caret {
+  opacity: 1;
+}
+.ui-select.work-cell-select.p-1 {
+  color: var(--danger);
+  font-weight: 600;
+}
+.ui-select.work-cell-select.p-2 {
+  color: var(--warn-mark);
+  font-weight: 600;
+}
+
+.work-key {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--text-caption);
+}
+.work-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.work-status.s-todo,
+.work-status.s-canceled {
+  color: var(--faint);
+}
+.work-status.s-doing {
+  color: var(--warn-mark);
+}
+.work-status.s-done {
+  color: var(--ok);
+}
+.work-prio.p-0 {
+  color: var(--faint);
+}
+.work-prio.p-1 {
+  color: var(--danger);
+  font-weight: 600;
+}
+.work-prio.p-2 {
+  color: var(--warn-mark);
+  font-weight: 600;
+}
+.work-prio.p-3 {
+  color: var(--text-soft);
+}
+.work-prio.p-4 {
+  color: var(--muted);
+}
+
+/* 操作列：「对话」常驻（这页的出口），删除悬停才出现。 */
+.work-actions {
+  display: grid;
+  grid-template-columns: auto 30px;
+  align-items: center;
+  justify-content: end;
+  gap: 4px;
+}
+.work-slot {
+  width: 30px;
+}
+.work-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 9px;
+  border: 1px solid var(--accent-line);
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent-fg);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  cursor: pointer;
+}
+/* 固定宽度：「对话」和「继续对话」字数不同，不定宽各行按钮左边缘就对不齐。 */
+.work-chat-btn {
+  justify-content: center;
+  min-width: 88px;
+}
+/* 继续对话用实色底，和「新开」区分开：一眼看出哪些已经在推进。 */
+.work-chat-btn.resume {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+.work-chat-btn.resume:hover:not(:disabled) {
+  border-color: transparent;
+  filter: brightness(1.08);
+}
+.work-chat-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.work-chat-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.work-del {
+  opacity: 0;
+}
+.work-table tr:hover .work-del,
+.work-del:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .work-del {
+    opacity: 1;
+  }
+}
+
+.work-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 160px;
+  margin: 0;
+  padding: var(--space-6);
+  color: var(--muted);
+  font-size: var(--text-label);
+  text-align: center;
+}
+.work-empty-art {
+  width: 160px;
+  height: 160px;
+  margin-bottom: var(--space-2);
+  border-radius: 18px;
+  object-fit: cover;
+}
+.work-empty strong {
+  color: var(--text);
+  font-size: var(--text-body);
+  font-weight: 600;
+}
+.work-empty .btn {
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 860px) {
+  .work {
+    padding: var(--space-3);
+  }
+}
+
+/* 优先级信号格、负责人头像、审核中状态（图标代替文字） */
+.work-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+.work-bars i {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--line-strong);
+}
+.work-bars i:nth-child(1) {
+  height: 5px;
+}
+.work-bars i:nth-child(2) {
+  height: 9px;
+}
+.work-bars i:nth-child(3) {
+  height: 14px;
+}
+.work-bars i.on {
+  background: var(--text-soft);
+}
+.work-bars.p-1 i.on {
+  background: var(--danger);
+}
+.work-bars.p-2 i.on {
+  background: var(--warn-mark);
+}
+.work-bars.p-0 i {
+  height: 2px;
+}
+.work-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: var(--bg-sunken);
+  color: var(--text-soft);
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+.work-status.s-review {
+  color: var(--ok);
+}
+.work-table tbody tr {
+  animation: rise 0.4s var(--ease) both;
+}
